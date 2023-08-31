@@ -1,0 +1,551 @@
+\documentclass[12pt,twoside]{article}
+\usepackage{chadstyle}  % Loads my formatting 
+\usepackage{longtable,booktabs}
+\usepackage{stmaryrd}
+%%%%%%%%\usepackage{mdframed}
+\usepackage{titlesec}
+%\usepackage{hyperref}
+%\usepackage[colorlinks,allcolors=blue]{hyperref}
+%%%%%%%%%\usepackage{amsthm}
+\usepackage{bbm}
+\usepackage{ftnxtra}
+\usepackage{fnpos}
+\usepackage{multirow}
+\usepackage{fontawesome}
+
+
+\usepackage{bigints}
+%%%%\usepackage[lite]{mtpro2}
+\usepackage{physics}
+\usepackage{scalerel}
+\usepackage{mathrsfs}
+\usepackage{empheq}
+
+\usepackage{extarrows}
+\usepackage{oubraces}
+\usepackage{bm} % bold greak letters
+
+%for algo
+\usepackage{algorithm,algorithmic}
+%\usepackage[noend]{algpseudocode}
+%\algrenewcommand\algorithmicindent{0.5em}%
+
+
+\usepackage{lmodern}
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\usepackage{csquotes}
+
+%\usepackage{tweaklist}  % I use this package as well; you may need to download
+
+%% Shortcut commands
+
+\usepackage[svgnames]{xcolor}%
+
+\definecolor{maroon}{cmyk}{0, 0.87, 0.68, 0.32}
+\definecolor{halfgray}{gray}{0.55}
+\definecolor{ipython_frame}{RGB}{207, 207, 207}
+\definecolor{ipython_bg}{RGB}{247, 247, 247}
+\definecolor{ipython_red}{RGB}{186, 33, 33}
+\definecolor{ipython_green}{RGB}{0, 128, 0}
+\definecolor{ipython_cyan}{RGB}{64, 128, 128}
+\definecolor{ipython_purple}{RGB}{170, 34, 255}
+
+
+\usepackage[amsmath]{ntheorem}
+\usepackage[ntheorem]{mdframed}
+\newmdtheoremenv[linewidth=5pt, linecolor=Gainsboro!75!Lavender, topline=false, bottomline=false, skipabove=15pt, skipbelow=20pt]{thm}{\color{ChadBlue}Théorème}
+
+\newmdtheoremenv[linewidth=5pt, linecolor=Gainsboro!75!Lavender, topline=false, bottomline=false, skipabove=15pt, skipbelow=20pt]{lemme}{\color{ChadBlue}Lemme}
+
+\newmdtheoremenv[linewidth=5pt, linecolor=Gainsboro!75!Lavender, topline=false, bottomline=false, skipabove=15pt, skipbelow=20pt]{definition}{\color{ChadBlue}Définition}
+
+
+%   \theoremclass{Theorem}
+%\newtheorem{proposition}{\color{ChadBlue} Théorème}
+%\newtheorem{lemme}{\color{ChadBlue} Lemme}
+%\newtheorem{definition}{\color{ChadBlue} Définition}
+
+\newcommand{\Proof}[2]{{\hspace{-\parindent} {\color{ChadBlue}\bf Démonstration}~\ref{#1}.}
+{#2}\hfill$\blacksquare$ \\ \vspace{.1in}}
+
+
+\newcommand{\sinc}{\mathrm{sinc}}
+\newcommand{\nn}{\nonumber}
+%\newcosecnumdepthmmand{\proptitle}[1]{\color{ChadBlue} \textnormal{(#1):}}
+%\newtheorem{proposition}{\color{ChadGreen} Proposition}
+%\newcommand{\assume}[2]{{\bf{Assumption #1}} (#2)} 
+%\newcommand{\clr}[1]{{\color{ChadBlue} #1}}
+%\newcommand{\clrg}[1]{{\color{ChadGreen} #1}}
+%\newcommand{\Proof}[2]{\newline {\hspace{-\parindent} {\color{ChadGreen}\bf Proof of Proposition}~\ref{#1}.}
+%{\color{ChadBlue} #2} \vspace{.1in}}
+
+% If you've loaded *tweaklist.sty* above, uncomment these lines:
+% Adjust spacing in itemize/enumerate; see tweaklist.sty
+%\renewcommand{\enumhook}{\setlength{\topsep}{2pt}%
+%  \setlength{\itemsep}{0pt}}
+%\renewcommand{\itemhook}{\setlength{\topsep}{2pt}%
+%  \setlength{\itemsep}{0pt}}
+
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[shorthands=off,main=french]{babel}
+\else
+    % See issue https://github.com/reutenauer/polyglossia/issues/127
+  \renewcommand*\familydefault{\sfdefault}
+    % load polyglossia as late as possible as it *could* call bidi if RTL lang (e.g. Hebrew or Arabic)
+  \usepackage{polyglossia}
+  \setmainlanguage[]{french}
+\fi
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{0pt}{0pt}
+%{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\usepackage{setspace}
+\setstretch{1.2}
+
+%eviter les lignes blanches
+\raggedbottom
+
+\newcommand*\widefbox[1]{\fbox{\hspace{2em}#1\hspace{2em}}}
+%\newcommand*\widefbox[1]{{\setlength\fboxsep{10pt}\fbox{\hspace{0.5em}#1\hspace{0.5em}}}}
+
+
+\newcommand{\sklearn}{\texttt{scikit-learn}}
+\newcommand{\itemb}{\item[$\bullet$]}
+
+%JEC
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiterX{\Iintv}[1]{\llbracket}{\rrbracket}{\iintvargs{#1}}
+\NewDocumentCommand{\iintvargs}{>{\SplitArgument{1}{,}}m}
+{\iintvargsaux#1} %
+\NewDocumentCommand{\iintvargsaux}{mm} {#1\mkern1.5mu..\mkern1.5mu#2}
+
+
+\newcommand{\fcc}[1]{\widehat{#1}^{\raisebox{1pt}{\,\scriptsize$\ast$}}}
+\usepackage{stackengine}
+\stackMath
+\def\hatgap{2pt}
+\def\subdown{-2pt}
+\newcommand\reallywidehat[2][]{%
+\renewcommand\stackalignment{l}%
+\stackon[\hatgap]{#2}{%
+\stretchto{%
+    \scalerel*[\widthof{$#2$}]{\kern-.6pt\bigwedge\kern-.6pt}%
+    {\rule[-\textheight/2]{1ex}{\textheight}}%WIDTH-LIMITED BIG WEDGE
+}{0.5ex}% THIS SQUEEZES THE WEDGE TO 0.5ex HEIGHT
+_{\smash{\belowbaseline[\subdown]{\scriptstyle#1}}}%
+}}
+
+\newcommand{\nblink}[1]{\href{https://github.com/jecampagne/ML-toys/blob/main/#1.ipynb}{\faFileCodeO}}
+
+
+\usepackage{indentfirst}
+%\setlength{\parindent}{1.5cm}
+
+\usepackage{listings}
+
+
+\lstset{
+    breaklines=true,
+    %
+    extendedchars=true,
+    literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+    {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+    {à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+    {À}{{\`A}}1 {È}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1
+    {ä}{{\"a}}1 {ë}{{\"e}}1 {ï}{{\"i}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+    {Ä}{{\"A}}1 {Ë}{{\"E}}1 {Ï}{{\"I}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1
+    {â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
+    {Â}{{\^A}}1 {Ê}{{\^E}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1 {Û}{{\^U}}1
+    {œ}{{\oe}}1 {Œ}{{\OE}}1 {æ}{{\ae}}1 {Æ}{{\AE}}1 {ß}{{\ss}}1
+    {ç}{{\c c}}1 {Ç}{{\c C}}1 {ø}{{\o}}1 {å}{{\r a}}1 {Å}{{\r A}}1
+    {€}{{\EUR}}1 {£}{{\pounds}}1
+}
+
+\lstdefinelanguage{iPython}{
+    morekeywords={access,and,break,class,continue,def,del,elif,else,except,exec,finally,for,from,global,if,import,in,is,lambda,not,or,pass,print,raise,return,try,while},%
+    %
+    % Built-ins
+    morekeywords=[2]{abs,all,any,basestring,bin,bool,bytearray,callable,chr,classmethod,cmp,compile,complex,delattr,dict,dir,divmod,enumerate,eval,execfile,file,filter,float,format,frozenset,getattr,globals,hasattr,hash,help,hex,id,input,int,isinstance,issubclass,iter,len,list,locals,long,map,max,memoryview,min,next,object,oct,open,ord,pow,property,range,raw_input,reduce,reload,repr,reversed,round,set,setattr,slice,sorted,staticmethod,str,sum,super,tuple,type,unichr,unicode,vars,xrange,zip,apply,buffer,coerce,intern},%
+    %
+    sensitive=true,%
+    morecomment=[l]\#,%
+    morestring=[b]',%
+    morestring=[b]",%
+    %
+    morestring=[s]{'''}{'''},% used for documentation text (mulitiline strings)
+    morestring=[s]{"""}{"""},% added by Philipp Matthias Hahn
+    %
+    morestring=[s]{r'}{'},% `raw' strings
+    morestring=[s]{r"}{"},%
+    morestring=[s]{r'''}{'''},%
+    morestring=[s]{r"""}{"""},%
+    morestring=[s]{u'}{'},% unicode strings
+    morestring=[s]{u"}{"},%
+    morestring=[s]{u'''}{'''},%
+    morestring=[s]{u"""}{"""},%
+    %
+    % {replace}{replacement}{lenght of replace}
+    % *{-}{-}{1} will not replace in comments and so on
+    literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+    {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+    {à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+    {À}{{\`A}}1 {È}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1
+    {ä}{{\"a}}1 {ë}{{\"e}}1 {ï}{{\"i}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+    {Ä}{{\"A}}1 {Ë}{{\"E}}1 {Ï}{{\"I}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1
+    {â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
+    {Â}{{\^A}}1 {Ê}{{\^E}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1 {Û}{{\^U}}1
+    {œ}{{\oe}}1 {Œ}{{\OE}}1 {æ}{{\ae}}1 {Æ}{{\AE}}1 {ß}{{\ss}}1
+    {ç}{{\c c}}1 {Ç}{{\c C}}1 {ø}{{\o}}1 {å}{{\r a}}1 {Å}{{\r A}}1
+    {€}{{\EUR}}1 {£}{{\pounds}}1
+    %
+    {^}{{{\color{ipython_purple}\^{}}}}1
+    {=}{{{\color{ipython_purple}=}}}1
+    %
+    {+}{{{\color{ipython_purple}+}}}1
+    {-}{{{\color{ipython_purple}-}}}1
+    {*}{{{\color{ipython_purple}$^\ast$}}}1
+    {/}{{{\color{ipython_purple}/}}}1
+    %
+    {+=}{{{+=}}}1
+    {-=}{{{-=}}}1
+    {*=}{{{$^\ast$=}}}1
+    {/=}{{{/=}}}1,
+    literate=
+    *{-}{{{\color{ipython_purple}-}}}1
+     {?}{{{\color{ipython_purple}?}}}1,
+    %
+    identifierstyle=\color{black}\ttfamily,
+    commentstyle=\color{ipython_cyan}\ttfamily,
+    stringstyle=\color{ipython_red}\ttfamily,
+    keepspaces=true,
+    showspaces=false,
+    showstringspaces=false,
+    %
+    rulecolor=\color{ipython_frame},
+    frameround={t}{t}{t}{t},
+    numbers=none,
+    numberstyle=\tiny\color{halfgray},
+    %
+    %
+    backgroundcolor=\color{ipython_bg},
+    %   extendedchars=true,
+    %basicstyle=\scriptsize,
+    basicstyle=\ttfamily\footnotesize,
+    columns=fullflexible,
+    keywordstyle=\color{ipython_green}\ttfamily,
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx} % Required for inserting images
+\graphicspath{{figures/}}
+
+
+\title{Statistiques sur générations WCRG et comparaisons avec d'autres modèles}
+\author{Jean-Eric Campagne, Etienne Lempereur}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+Dans cette note est exposé une série de statistiques calculées sur des images générées par WCRG \citep{2023arXiv230600181G} en les comparant aux mêmes statistiques calculées non seulement avec les images ayant servies au training du modèle, mais aussi pour un jeu de données avec d'autres modèles comme un DGAN et un modèle micro-locale.
+
+Brièvement, les données utilisées sont les suivantes: 
+\begin{itemize}
+\item[WL-1]: la motivation première était de comparer les images de Weak Lensing\footnote{La référence utilise des résultats de la simulation N-corps GadGet2.} issues d'un modèle Deep GAN de la référence \citep{2019ComAC...6....1M} avec un modèle WCRG entrainé à partir des mêmes données d'entrainement que le réseau génératif. Donc, pour le training les auteurs nous ont fourni 100,000 images 128x128 pixels, ainsi qu'un lot d'images générées par leur réseau CosmoGAN. Ainsi, nous n'avons donc pas ré-entrainé un DGAN à cette occasion. Nous avons extrait 5,000 images\footnote{C'est la statistique utilisée dans la référence \citep{2023arXiv230600181G}} pour l'entrainement d'un modèle WCRG (noté par la suite WCRG-WL1). Nous détaillons un peu plus le traitement dans la section \ref{sec:WL1}.
+\item[WL-2 \& $\phi_4$]:  A la suite, de la comparaison entre le modèle WCRG-WL1 et le DGAN, nous nous sommes interrogés sur ce que les modèles WCRG entrainés sur des données WL mentionnées dans le papier \citep{2023arXiv230600181G}. Nous avons donc repris ces images d'entrainement et synthétisées pour calculer les statistiques. Idem nous avons utilisé les images d'entrainement et synthétisées par WCRG $\phi_4$ ($\beta=\{0.5, 0.68, 0.76\}$ pour calculer les dites statistiques. Cela est détaillé dans la section \ref{sec:WL2_Phi4}
+\end{itemize}
+
+Les statistiques utilisées sont principalement issues du code python \textit{scattering\_transform} développé par Siho Cheng\footnote{\url{https://github.com/SihaoCheng/scattering_transform} commit Fri Jun 2 11:14:53}
+et utilisé entres autres dans les articles \citep{2021arXiv211201288C, 2023arXiv230617210C}. Cela concerne, le power, le bi et le tri spectra et aussi les coefficients de corrélation $C_{00}$ et $C_{01}$. Concernant les données de WL, la statistique du comptage de pics a également été utilisée. 
+
+Concernant la modélisation WCRG, le code python utilisé est celui du repository \url{https://github.com/Elempereur/WCRG/} mentionné dans la publication afférente.
+%
+\section{Modélisation WCRG sur les données WL-1}
+%
+\subsection{Phase d'apprentissage}
+%
+Avant l'entrainement du modèle WCRG, un traitement des données que l'on peut qualifier de "gaussianisation" a été effectué. En effet, sur la figure \ref{fig-WL1-non-trans}, on peut remarquer que la distribution des valeurs des pixels est mono-mode et peut être transformée en distribution normale par la méthode Cox-Box suivie d'une standardisation classique\footnote{Si $x$ est la valeur d'un pixel original alors primo par l'optimisation Cox-Box on trouve $\lambda^\ast \approx -0.22$, et $x^\prime = (x^{\lambda^\ast}-1)/\lambda^\ast$ suit une loi gaussienne, puis la standardisation classique permet d'obtenir une distribution normale $x^\prime \sim \mathcal{N}(0,1)$.}. Le résultat de la transformation globale est illustré sur la figure \ref{fig-WL1-trans}. Cette transformation globale (inversible) est appliquée sur tous les lots de d'images (entrainement et génération) du DGAN.
+%
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{fig-WL1-img-non-transformed.png}
+\includegraphics[width=0.45\textwidth]{fig-WL1-pixelval-non-trans.png}
+\caption{Exemple d'une image du lot WL-1 (gauche) et la distribution afférente des valeurs de pixels (droite).}
+\label{fig-WL1-non-trans}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=0.45\textwidth]{fig-WL1-img-non-transformed.png}
+\caption{Distribution des valeurs de pixels de la figure \ref{fig-WL1-non-trans} après application d'une transformation Cox-Box de paramètre $\lambda \approx -0.22$ et d'une standardisation classique.}
+\label{fig-WL1-trans}
+\end{figure}
+
+Concernant l'optimisation du modèle WCRG\footnote{Notons que l'optimisation du modèle pourrait sans doute se passer de l'opération de gaussianisation préalable, mais l'idée était que cela pourrait aider \textit{a priori} de ne pas avoir à traiter des queues de distributions trop asymétriques.}, la démarche est très proche de celle documenté sur le repository du code, en particulier le notebook \textit{Learning\_Models.ipynb} moyennant quelques adaptations décrites ci-après.
+\begin{itemize}
+\itemb Les ondelettes utilisées sont de la familles Debauchies d'ordre 4 avec un padding périodique.
+\itemb Pour l'ansatz $E(x_J)$ ($J=7$, $L=1$) a été utilisée la fonction 
+\begin{lstlisting}[language=iPython]
+def ANSATZ_NoCondi(L,centers,sigma,shifts,shifts_sym = False):
+    """Non conditionnal ansatz for direct estimation of energy, a scalar potential (sigmoids) + a quadratic potential
+    
+    Parameters:
+    L (int): system size = L*L 
+    centers (tensor): position of the centers of the sigmoids 
+    sigma (tensor) : width of the sigmoids
+    shifts (list of tuples) : spatial shifts for the quadratic potential, carefull (0,0) is already taken into account, do not add here  
+    shifts_sym (Bool) : if True, the shifts are not symetrized
+    """
+\end{lstlisting}
+avec 20 sigmoïdes  régulièrement espacées entre le min et le max de la distribution des pixels $\approx [-100,100]$, et par ailleurs \textsf{shifts = ()}). L'optimisation SGD est menée après avoir normalisé le hessien.
+%\begin{figure}[h]
+%\centering
+%\includegraphics[width=0.4\textwidth]{fig-WL1-L1-sigmoids.png}
+%\includegraphics[width=0.4\textwidth]{fig-WL1-L1-potentiel.png}
+%\caption{Scale $L=1$: sigmoïdes et potentiel optimisé.}
+%\label{fig-WL1-L1}
+%\end{figure}
+
+\itemb A toutes les échelles $L>1$, nous avons utilisé la fonction 
+\begin{lstlisting}[language=iPython]
+def ANSATZ_Wavelet(W,L,centers,sigma,mode,shifts,shifts_sym = False):
+""" Conditionnal ansatz for conditonal Energy \bar E(\bar x_j\vert x{j}) estimation with a wavelet transform,with a scalar potential (sigmoids) + a quadratic potential
+    
+    Parameters:
+    W (Wavelet) : Wavelet to perfom fast wavelet transform
+    L (int): system size ( of x_{j-1}) = L*L 
+    centers (tensor): position of the centers of the sigmoids 
+    sigma (tensor) : width of the sigmoids
+    shifts (list of tuples) : spatial shifts for the quadratic potential, carefull (0,0) is already taken into account, do not add here 
+    shifts_sym (Bool) : if True, the shifts are not symetrized
+"""    
+\end{lstlisting}
+Tout comme pour $E_J$, l'optimisation SGD est menée après avoir normalisé le hessien.
+%
+\itemb A l'échelle $L=2$, 30 sigmoïdes régulièrement espacées dans l'intervalle $[-75, 75]$ sont utilisées, tandis que \textsf{extend = 1.0}. Les autres paramètres sont \textsf{mode = 'All'} et \textsf{shifts = ()}.  
+%\begin{figure}[h]
+%\centering
+%\includegraphics[width=0.4\textwidth]{fig-WL1-L2-sigmoids.png}
+%\includegraphics[width=0.4\textwidth]{fig-WL1-L2-potentiel.png}
+%\caption{Scale $L=2$: même légende que la figure \ref{fig-WL1-L1}.}
+%\label{fig-WL1-L2}
+%\end{figure}
+
+%
+\itemb A l'échelle $L=4$,  30 sigmoïdes sont également utilisées mais cette fois réparties uniformément selon les quantiles avec $q_{min}=10^{-5}$, $q_{max}=1.0$ et \textsf{extend = 1.0}. De plus \textsf{mode = 'All'} tandis que \textsf{shifts = ((1,0),(0,1),(1,1))} conjointement à \textsf{shifts\_sym = True}.
+%
+\itemb A l'échelle $L=8$, on utilise 40 sigmoïdes réparties uniformément selon les quantiles avec $q_{min}=10^{-5}$, $q_{max}=1.0$ et \textsf{extend = 1.0}. Par ailleurs outre \textsf{mode = 'All'}, nous avons utilisé la fonction suivante pour définir les shifts tels que 
+\textsf{shifts =shift\_modif(L//4)}.
+\begin{lstlisting}[language=iPython]
+def shift_modif(n):
+    shifts =[]
+    for i in range(-n,n):
+        for j in range(-n,n):
+            if i==0 and j==0:
+                pass
+            else:
+                shifts.append((i,j))
+    return shifts
+\end{lstlisting}
+%
+\itemb A l'échelle $L=16$, se sont 40 sigmoïdes uniformément réparties sur l'intervalle $[-30, 30]$ que l'on utilise avec \textsf{extend = 1.0}. Par ailleurs \textsf{mode = 'All'} et 
+\textsf{shifts =shift\_modif(L//4)}.
+%
+\itemb A l'échelle $L=32$, on utilise comme précédemment 40 sigmoïdes uniformément réparties sur l'intervalle $[-20, 20]$ (\textsf{extend = 1.0}). Les paramètres \textsf{extend}, \textsf{mode} et \textsf{shifts} sont les mêmes valeurs pour les deux premiers et définition pour le dernier que pour l'échelle précédente.
+%
+\itemb A l'échelle $L=64$, on utilise 30 sigmoïdes réparties uniformément selon les quantiles avec $q_{min}=10^{-5}$, $q_{max}=1.0$ et \textsf{extend = 1.0}. De plus si \textsf{mode = 'All'} comme précédemment, par contre \textsf{shifts = shift\_modif(L//8)}.
+%
+\itemb Enfin à l'échelle $L=128$ (taille des images d'entrainement), on utilise comme  30 sigmoïdes uniformément réparties sur l'intervalle $[-7.0, 5.5]$ (\textsf{extend = 0.25}), et si \textsf{mode = 'All'} comme précédemment, par contre \textsf{shifts = shift\_modif(L//16)}.
+%
+\itemb Les paramètres qui sont particulièrement délicats affectant la synthèse des images aux différentes échelles, sont ceux qui définissent les centres des sigmoïdes (l'intervalle $[min,max]$ pour \textsf{linspace\_centers}, ou $[q_{min},q_{max}]$ pour \textsf{quantile\_centers}. La méthode \textsf{shift\_modif} a été utilisée in fine mais ne change pas vraiment les résultats par rapport à l'usage de \textsf{shift\_quad\_Sym} utilisée de prime abord. Les optimisations SGD sont souvent reprises pour un peu tuner les paramètres tels que le nombre d'époques \textsf{num\_epochs} et le learning rate \text{lr}. Parfois deux étapes d'optimisation ont été pratiquées, notamment avec une valeur de  \text{lr} plus petite pour la seconde étape.
+\end{itemize}
+%
+
+Une fois les paramètres "optimisés" (par ex. les sigmoïdes), les différents potentiels appris $\bar{v}_j(x_{j-1})$ sont présentés sur la figure \ref{fig-WL1-potentiels-optim}.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{fig-WL1-potentiels-optim.png}
+\caption{Potentiels scalaires équivalents $\bar{v}_j$ appris à chaque échelle $j$ pour les images de WL-1.}
+\label{fig-WL1-potentiels-optim}
+\end{figure}
+%
+\subsection{Phase de synthèse}
+%
+Une fois le modèle appris, on peut regarder à chaque échelle la qualité des synthèses. En fait, à dire vrai, les paramètres qui définissent les sigmoïdes à toutes les échelles ont été ajustés à la main largement pour que les histogrammes de contrôles montre une bonne adéquation entre images d'origines et images de synthèse. La technique de sampling est en tout point identique à celle mise en œuvre pour l'article. Ce qui peut changer concerne le nombre de steps et la taille de chaque step. \textit{Même si la suite pourrait paraître fastidieuse et répétitive, dans cette note une certaine exhaustivité s'impose néanmoins surtout que les codes n'ont pu être tournés sur notebooks partageables.} 
+
+A l'échelle $L=1$, la comparaison des distributions de valeurs de pixels entre données d'entrainement et synthétisées est montrée sur la figure \ref{fig-WL1-synt-L1-pixelval}.
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L1-pixelval.png}
+\caption{Comparaison des valeurs de pixels à l'échelle $L=1$.}
+\label{fig-WL1-synt-L1-pixelval}
+\end{figure}
+
+Aux échelles suivantes, outre la comparaison des distributions des valeurs de pixels des images originales et synthétisées, on peut également questionner la distribution des cartes de détails hautes fréquences (horizontales/verticales/diagonales) obtenues par décomposition en ondelettes.
+
+Les résultats aux échelles $L\in[1,128]$ sont présentés sur les figures de \ref{fig-WL1-synt-L2} à \ref{fig-WL1-synt-L128}. Pour des raisons tenant à la taille mémoire des GPUs utilisés, le nombre de cartes générées jusqu'à l'échelle 16 incluse est de 5000, tandis que pour les échelles supérieures on ne peut disposer que de 500 cartes.
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L2-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L2-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L2-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L2-details_3.png}
+\caption{Comparaison à l'échelle $L=2$ entre cartes de type "originale/entrainement" et de type "synthètisée": distribution des valeurs de pixels de cartes "totales" (haut-gauche), de détails "H" (haut-droite), de détails "V" (bas-gauche) et de détails "D" (bas-droite). }
+\label{fig-WL1-synt-L2}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L4-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L4-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L4-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L4-details_3.png}
+\caption{Echelle $L=4$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
+\label{fig-WL1-synt-L4}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L8-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L8-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L8-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L8-details_3.png}
+\caption{Echelle $L=8$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
+\label{fig-WL1-synt-L8}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L16-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L16-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L16-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L16-details_3.png}
+\caption{Echelle $L=16$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
+\label{fig-WL1-synt-L16}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L32-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L32-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L32-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L32-details_3.png}
+\caption{Echelle $L=32$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
+\label{fig-WL1-synt-L32}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L64-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L64-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L64-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L64-details_3.png}
+\caption{Echelle $L=64$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
+\label{fig-WL1-synt-L64}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L128-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L128-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L128-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L128-details_3.png}
+\caption{Echelle $L=128$ (la plus grande possible): légende identique à la figure \ref{fig-WL1-synt-L2}.}
+\label{fig-WL1-synt-L128}
+\end{figure}
+
+A l'échelle $L=128$, on dispose de cartes synthétisées "finales" qui si tout se passe au mieux doivent ressembler comme deux gouttes d'eau aux cartes utilisées pour l'entrainement (ou cartes "originales"). La figure \ref{fig-WL1-synt-exemples} donne quelques exemples de cartes originales et synthétisées.
+%
+\begin{figure}
+\centering
+\includegraphics[width=0.99\textwidth]{fig-WL1-synt-exemples.png}
+\caption{Exemples de cartes WL-1 utilisées pour l'entrainement et synthétisées une fois le modèles WCRG optimisé.}
+\label{fig-WL1-synt-exemples}
+\end{figure}
+% 
+Il est indéniable que le modèle a appris quelque chose. Maintenant, dans l'article \citep{2023arXiv230600181G}, il est montré non seulement des cartes synthétisées, la distribution des valeurs de pixels\footnote{nb. le modèle de l'article a été optimisé directement sur les cartes de WL-2 sans transformation préalable donc on ne peut comparer les modèles. Cela sera sans doute à revoir ultérieurement.} mais aussi la comparaison  du spectre de puissance. Ce dernier point a motivé l'usage de statistiques afin de caractériser les distributions des pixels et de comparer ces statistiques obtenues sur les cartes originales et les synthétisées. Ceci est présenté dans la section suivante.
+%
+\subsection{Usage de statistiques d'ordre supérieures}
+%
+Un certain nombre de statistiques ont été utilisées afin d'aller au-delà de l'aspect visuel jugeant de la qualité de la synthèse des cartes de WL-1. Comme mentionné dans l'introduction, en premier lieu il a été utilisé le code développé par Siho Cheng afin de calculer:
+\begin{itemize}
+\itemb les classiques spectre de puissance, \textit{bi}-spectre et \textit{tri}-spectre; 
+\itemb mais aussi les versions \textit{isotropiques} "C01\_iso" et "C11\_iso" des corrélations définies selon
+\begin{eqnarray}
+ C01 &=& \langle(I \ast \psi_2)(|I \ast \psi_1| \ast \psi_2)^\ast\rangle / factor \\
+ C11 &=& <(|I \ast \psi_1| * \psi_3)(|I * \psi_2| * \psi_3)^\ast\rangle / factor
+\end{eqnarray}
+avec $I$ la carte de champ, $\psi_i$ des ondelettes de Morlet à différentes échelles et orientations et la choix de normalisation est 
+\begin{equation}
+factor = L2(I \ast \psi_1) * L2(I \ast \psi_2)
+\end{equation}
+\end{itemize}
+En pratique pour fixer un peu les idées l'obtention des différents spectres et coefficients "C01\_iso" et "C11\_iso" s'effectue schématiquement selon les étapes (si "maps" correspond à un lot de cartes):
+\begin{lstlisting}[language=iPython]
+bins_pw = 30
+Nmaps,M,N = maps.shape
+J = int(np.log2(min(M,N))) - 1
+pw, kr  = scattering.get_power_spectrum(maps,
+              k_range=np.logspace(0,np.log10(M/2*1.4), 
+              bins_pw+1))
+bi_calc = scattering.Bispectrum_Calculator(M,N, 
+              k_range=np.logspace(0,np.log10(M/2*1.4), J-1))
+tri_calc = scattering.Trispectrum_Calculator(M,N,
+              k_range=np.logspace(0,np.log10(M/2*1.4), J-1))
+
+st_calc = scattering.Scattering2d(M, N, J=6, L=4)
+
+cov_coef = st_calc.scattering_cov(maps)
+select_and_index = get_scattering_index(J, L, normalization='P00', C11_criteria='j2>=j1')
+c01 = cov_coef['C01_iso'][:,select_and_index['select_2_iso']]
+c11 = cov_coef['C11_iso'][:,select_and_index['select_3_iso']]
+\end{lstlisting}
+Afin de satisfaire des contraintes de taille de mémoire, les spectres/coefficients ont été calculés sur des batchs de cartes et ensuite on en a tiré moyennes et écarts-types (barres d'erreur dans les histogrammes).
+
+Concernant les données de WL, on a utilisé une statistique d'ordre supérieur qui s'est répandue dans certains articles récents comme par exemple la référence \citep{2023arXiv230507531L} et les références incluses, concerne le comptage de "pics" au dessus d'un seuil. Pour se faire le code de D. Lanizieri et al. a été utilisé\footnote{\url{https://github.com/LSSTDESC/DifferentiableHOS.git}}. Un exemple pour un seuil de $2$ est donné sur la figure \ref{fig-WL-peakcount-thr2-exemple}.
+\begin{figure}
+\centering
+\includegraphics[width=0.4\textwidth]{fig-WL-peakcount-thr2-exemple.png}
+\caption{Exemples de la recherche de pics au dessus d'un seuil ici pris à 2.}
+\label{fig-WL-peakcount-thr2-exemple}
+\end{figure}
+
+
+
+
+
+ 
+
+
+ 
+%
+\section{Conclusion}
+% 
+\section{Annexe}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Put your bibiliography file here
+%\section*{Bibliography}
+\bibliographystyle{aa}
+\bibliography{refs.bib}
+
+\end{document}
