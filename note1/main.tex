@@ -72,6 +72,7 @@
 \newcommand{\Proof}[2]{{\hspace{-\parindent} {\color{ChadBlue}\bf Démonstration}~\ref{#1}.}
 {#2}\hfill$\blacksquare$ \\ \vspace{.1in}}
 
+\newcommand{\Av}[1] {\underset {#1} {\rm Ave}\,}
 
 \newcommand{\sinc}{\mathrm{sinc}}
 \newcommand{\nn}{\nonumber}
@@ -284,6 +285,7 @@ Concernant la modélisation WCRG, le code python utilisé est celui du repositor
 \section{Modélisation WCRG sur les données WL-1}
 %
 \subsection{Phase d'apprentissage}
+\label{sec-wcrg-WL1-learning}
 %
 Avant l'entrainement du modèle WCRG, un traitement des données que l'on peut qualifier de "gaussianisation" a été effectué. En effet, sur la figure \ref{fig-WL1-non-trans}, on peut remarquer que la distribution des valeurs des pixels est mono-mode et peut être transformée en distribution normale par la méthode Cox-Box suivie d'une standardisation classique\footnote{Si $x$ est la valeur d'un pixel original alors primo par l'optimisation Cox-Box on trouve $\lambda^\ast \approx -0.22$, et $x^\prime = (x^{\lambda^\ast}-1)/\lambda^\ast$ suit une loi gaussienne, puis la standardisation classique permet d'obtenir une distribution normale $x^\prime \sim \mathcal{N}(0,1)$.}. Le résultat de la transformation globale est illustré sur la figure \ref{fig-WL1-trans}. Cette transformation globale (inversible) est appliquée sur tous les lots de d'images (entrainement et génération) du DGAN.
 %
@@ -391,6 +393,7 @@ Une fois les paramètres "optimisés" (par ex. les sigmoïdes), les différents 
 \end{figure}
 %
 \subsection{Phase de synthèse}
+\label{sec-wcrg-WL1-synt}
 %
 Une fois le modèle appris, on peut regarder à chaque échelle la qualité des synthèses. En fait, à dire vrai, les paramètres qui définissent les sigmoïdes à toutes les échelles ont été ajustés à la main largement pour que les histogrammes de contrôles montre une bonne adéquation entre images d'origines et images de synthèse. La technique de sampling est en tout point identique à celle mise en œuvre pour l'article. Ce qui peut changer concerne le nombre de steps et la taille de chaque step. \textit{Même si la suite pourrait paraître fastidieuse et répétitive, dans cette note une certaine exhaustivité s'impose néanmoins surtout que les codes n'ont pu être tournés sur notebooks partageables.} 
 
@@ -482,22 +485,26 @@ A l'échelle $L=128$, on dispose de cartes synthétisées "finales" qui si tout 
 % 
 Il est indéniable que le modèle a appris quelque chose. Maintenant, dans l'article \citep{2023arXiv230600181G}, il est montré non seulement des cartes synthétisées, la distribution des valeurs de pixels\footnote{nb. le modèle de l'article a été optimisé directement sur les cartes de WL-2 sans transformation préalable donc on ne peut comparer les modèles. Cela sera sans doute à revoir ultérieurement.} mais aussi la comparaison  du spectre de puissance. Ce dernier point a motivé l'usage de statistiques afin de caractériser les distributions des pixels et de comparer ces statistiques obtenues sur les cartes originales et les synthétisées. Ceci est présenté dans la section suivante.
 %
-\subsection{Usage de statistiques d'ordre supérieures}
+\section{Réduction d'information par l'usage de statistiques}
+\label{sec-summary-stat}
 %
 Un certain nombre de statistiques ont été utilisées afin d'aller au-delà de l'aspect visuel jugeant de la qualité de la synthèse des cartes de WL-1. Comme mentionné dans l'introduction, en premier lieu il a été utilisé le code développé par Siho Cheng afin de calculer:
 \begin{itemize}
 \itemb les classiques spectre de puissance, \textit{bi}-spectre et \textit{tri}-spectre; 
-\itemb mais aussi les versions \textit{isotropiques} "C01\_iso" et "C11\_iso" des corrélations définies selon
+\itemb le coefficient de scattering $S1_{iso}$, ainsi que les coefficients composites $s_{21}$ (sparsity) et $s_{22}$ (shape) définis dans la référence \citep{2021arXiv211201288C}; 
+\itemb mais aussi les versions \textit{isotropiques} des corrélations de scattering définies selon\footnote{$\langle x \rangle =\Av{u}(x(u))$.}
 \begin{eqnarray}
- C01 &=& \langle(I \ast \psi_2)(|I \ast \psi_1| \ast \psi_2)^\ast\rangle / factor \\
- C11 &=& <(|I \ast \psi_1| * \psi_3)(|I * \psi_2| * \psi_3)^\ast\rangle / factor
+ C_{01} &=& \langle(I \ast \psi_2)(|I \ast \psi_1| \ast \psi_2)^\ast\rangle / factor \\
+ C_{11} &=& \langle(|I \ast \psi_1| * \psi_3)(|I * \psi_2| * \psi_3)^\ast\rangle / factor
 \end{eqnarray}
-avec $I$ la carte de champ, $\psi_i$ des ondelettes de Morlet à différentes échelles et orientations et la choix de normalisation est 
+avec $I$ la carte de champ, $\psi_i$ des ondelettes de Morlet à différentes échelles et orientations et où le choix de normalisation est défini par
 \begin{equation}
-factor = L2(I \ast \psi_1) * L2(I \ast \psi_2)
+factor = L2(I \ast \psi_1) \times L2(I \ast \psi_2)
 \end{equation}
+Les définitions de ces facteurs sont décrites dans l'article \citep{2023arXiv230617210C}: $C_{01}$ et $C_{11}$ correspondent respectivement à $\tilde{S}_3$ et $\tilde{S}_4$, et la version "iso" opère une réduction sur les paires d'angles. 
 \end{itemize}
-En pratique pour fixer un peu les idées l'obtention des différents spectres et coefficients "C01\_iso" et "C11\_iso" s'effectue schématiquement selon les étapes (si "maps" correspond à un lot de cartes):
+
+En pratique afin de fixer un peu les idées, l'obtention des différents spectres et coefficients  s'effectue schématiquement selon les étapes suivantes (si "maps" correspond à un lot de cartes):
 \begin{lstlisting}[language=iPython]
 bins_pw = 30
 Nmaps,M,N = maps.shape
@@ -512,34 +519,132 @@ tri_calc = scattering.Trispectrum_Calculator(M,N,
 
 st_calc = scattering.Scattering2d(M, N, J=6, L=4)
 
+coeffs = st_calc.scattering_coef(maps)
+s1  = np.log10(coeffs['S1_iso'])
+s21 = np.log10(coeffs['s21'])
+s22 = np.log10(coeffs['s22'])
+
 cov_coef = st_calc.scattering_cov(maps)
 select_and_index = get_scattering_index(J, L, normalization='P00', C11_criteria='j2>=j1')
 c01 = cov_coef['C01_iso'][:,select_and_index['select_2_iso']]
 c11 = cov_coef['C11_iso'][:,select_and_index['select_3_iso']]
 \end{lstlisting}
-Afin de satisfaire des contraintes de taille de mémoire, les spectres/coefficients ont été calculés sur des batchs de cartes et ensuite on en a tiré moyennes et écarts-types (barres d'erreur dans les histogrammes).
+De plus, afin de satisfaire des contraintes de taille de mémoire, les spectres/coefficients ont été calculés sur des lots de cartes dont on en a tiré des moyennes et écarts-types (barres d'erreur dans les histogrammes).
 
-Concernant les données de WL, on a utilisé une statistique d'ordre supérieur qui s'est répandue dans certains articles récents comme par exemple la référence \citep{2023arXiv230507531L} et les références incluses, concerne le comptage de "pics" au dessus d'un seuil. Pour se faire le code de D. Lanizieri et al. a été utilisé\footnote{\url{https://github.com/LSSTDESC/DifferentiableHOS.git}}. Un exemple pour un seuil de $2$ est donné sur la figure \ref{fig-WL-peakcount-thr2-exemple}.
+Dans le cas des cartes de WL, on a également utilisé le comptage de "pics" au dessus d'un seuil. Il s'agit d'une statistique d'ordre supérieur à la recherche des non-gaussianité qui s'est répandue récemment (voir la référence \cite{2023arXiv230507531L} et les références incluses). Pour se faire la méthode détaillée dans l'article de D. Lanizieri et al. a été utilisée\footnote{\url{https://github.com/LSSTDESC/DifferentiableHOS.git}} avec à la base la fonction \textsf{find\_peaks2d\_tf} du package \textsf{lenspack}\footnote{\url{https://github.com/CosmoStat/lenspack}} qui cherche la localisation des pics ainsi que leurs "hauteurs", puis un lissage par un noyau gaussien. Le résultat est donc un histogramme de la distribution smoothée des hauteurs de pics d'une carte (ou d'un lot de cartes). Un exemple de recherche de pics pour un seuil de $2$ est donné sur la figure \ref{fig-WL-peakcount-thr2-exemple}.
 \begin{figure}
 \centering
 \includegraphics[width=0.4\textwidth]{fig-WL-peakcount-thr2-exemple.png}
 \caption{Exemples de la recherche de pics au dessus d'un seuil ici pris à 2.}
 \label{fig-WL-peakcount-thr2-exemple}
 \end{figure}
+%
+\section{Résultats concernant les données WL-1}
+\label{sec-WL1-res}
+%
+Une fois le modèle WCRG obtenu selon la méthode détaillée à la section \ref{sec-wcrg-WL1-learning}, on peut calculer les statistiques décrites dans la section précédente non seulement sur des cartes générées (Sec.~\ref{sec-wcrg-WL1-synt}) mais aussi sur des cartes ayant servi à l'apprentissage du modèle. Les résultats sont présentés sur la figure \ref{fig-WL1-summary-stat} sous les appellations "wcrg" (rouge) et "train" (bleu). Il est assez remarquable que la quasi totalité des distributions issues de la génération de cartes par le modèle WCRG soient bien, voire très bien reproduite. 
+\begin{figure}
+\centering
+\includegraphics[width=0.99\textwidth]{fig-WL1-summary-stat.png}\\
+\includegraphics[width=0.4\textwidth]{fig-WL1-peak-count.png}
+\caption{Histogrammes des statistiques détaillées à la section \ref{sec-summary-stat}. Il est a noté qu'excepté le comptage de pics, les distributions sont calculées avec 500 cartes.}
+\label{fig-WL1-summary-stat}
+\end{figure}
+Donc, il n'est pas étonnant que les différences que nous pointons par la suite n'aient pas été mise en évidence dans l'article \citep{2023arXiv230600181G}.
 
+Si on se penche sur les distributions qui dénotent, on constate que:
+\begin{itemize}
+\itemb en premier lieu ce qui questionne concerne la distribution $C_{01}^{iso}$ qui manifestement a un problème, alors que la distribution $C_{11}^{iso}$ est bien reproduite;
+\itemb dans une moindre mesure on constate aussi que le bi-spectre ($s_{21}$) est moins bien reproduit que le tri-spectre ($s_{22}$).
+\end{itemize} 
+C'est deux points dont l'origine peut être la même, a motiver les investigations suivantes.
 
+Notons que si l'on prend les cartes  issues de la génération du réseau CosmoGAN mentionné en introduction, il y a un parfait accord de toutes les distributions "dgan" (orange) avec les distribution d'entrainement ("train"). En ce sens, le GAN fait mieux sur ce critère\footnote{Rappel: à l'origine de l'étude était la comparaison "dgan", "wcrg", et dans ce contexte le nombre d'images ayant servit à l'entrainement du modère WCRG est de 5,000 images alors que le DGAN en a utilisé 200,000 \citep{2019ComAC...6....1M}}.  
 
+Nous avons également procédé à la synthèses de cartes en utilisant une modélisation micro-canonique \citep{2023arXiv230617210C} à l'aide du code de Siho Cheng selon typiquement 
+\begin{lstlisting}[language=iPython]
+ st_calc.scattering_cov(...)['for_synthesis']
+\end{lstlisting}
+qui utilise les paramètres: le rapport $\langle I\rangle/\sigma(I)$, $L2(I\ast \psi_i)$, $S_1$, ainsi que les parties réelles et imaginaires des coefficients de corrélation $C_{01}$ et $C_{01}$
+Ce type de modélisation/synthèse notée "micro"(vert) sur la Fig.~\ref{fig-WL1-summary-stat} reproduit très bien la quasi totalité des distributions exceptée\footnote{Si l'on ne porte que les distributions "train" et "micro", la remontée du spectre de puissance "micro" est bien visible.} le spectre de puissance à grande valeur de $k$ même si on note que les fluctuations des valeurs sont bien plus réduites que pour les autres modèles pourtant calculées avec le même nombre de cartes. Ceci, concernant les coefficients $C_{01}$ l'accord est parfait, mais on s'en doutait puisqu'ils rentrent dans la liste des paramètres ayant servi pour définir la métrique à minimiser afin de produire le modèle micro-canonique.
 
+Dans les sections suivantes, nous allons utiliser les cartes générées par les modèles WCRG ainsi que celles d'entrainement de type WL-2 et $\phi_4$ décrites dans l'introduction, afin de savoir si ces modèles performent mieux ou pas.
+%
+\section{Modèles WCRG et données WL-2 et $\phi_4$}
+%
+La question qui vient est de savoir pour quelles raisons la distribution $C_{01}^{iso}$ (et aussi bi-spectre et $s_{21}$) est nettement moins bien reproduite par le modèle WCRG optimisé comme décrit à la section \ref{sec-wcrg-WL1-learning}. Pour se faire, nous avons utilisé directement (c'est-à-dire sans nouveau entrainement) les modèles et les données de l'article \citep{2023arXiv230600181G}.
 
- 
+Concernant les données WL-2, on dispose pour le calcul des statistiques de 500 cartes d'entrainement ("train") et de 209 cartes générées ("wcrg"). Une note technique: nous avons procéder à un recalage de la distribution des valeurs de pixels des cartes générées afin que la moyenne soit égale à celle des cartes d'entrainement, mais nous n'avons pas opéré de gaussianisation (cf. Sec.~\ref{sec-wcrg-WL1-learning}). Les résultats sont présentés sur la figure \ref{fig-WL2-summary-stat}.
+\begin{figure}
+\centering
+\includegraphics[width=0.99\textwidth]{fig-WL2-summary-stat.png}\\
+\includegraphics[width=0.4\textwidth]{fig-WL2-peak-count.png}
+\caption{Statistiques de la figure \ref{fig-WL1-summary-stat} mais concernant les données WL-2.}
+\label{fig-WL2-summary-stat}
+\end{figure}
+Par rapport à la figure \ref{fig-WL1-summary-stat} utilisant un modèle optimisé sur les données WL-1 (gaussianisée), on constate 
+\begin{itemize}
+\itemb primo que la distribution des $C_{01}^{iso}$  calculées avec les cartes générées ("wcrg") suit les ondulations de la distribution calculée sur les données d'entrainement ("train"). Mais il y a un petit désaccord néanmoins mais bien plus petit qu'en même.
+\itemb les petits désaccords sur les distribution bi-spectre et $s_{21}$ sont de même ampleur
+\itemb on note également petit désaccord  sur la distribution des $C_{11}^{iso}$.
+\end{itemize}
+Ce premier point nous renseigne sur le fait qu'un modèle WCRG est capable de générer des cartes avec des coefficients $C_{01}^{iso}$ convenables en tous les cas bien plus que ceux de la figure \ref{fig-WL1-summary-stat}. 
 
+Concernant les données $\phi_4$, on dispose de 3 lots obtenus avec les valeurs de $\beta$ différentes ($\{0.5,\ 0.68,\ 0.76\}$) qui influencent la dynamique sous-jacente. Tout comme pour les cartes WL-2, on a procédé à l'accord des moyennes des distributions des valeurs de pixles entre les cartes générées et les  cartes d'entrainement. Les différents résultats sont exposés sur les figures \ref{fig-phi4-b050-summary-stat}, \ref{fig-phi4-b068-summary-stat}, et \ref{fig-phi4-b076-summary-stat}.
 
- 
+\begin{figure}
+\centering
+\includegraphics[width=0.99\textwidth]{fig-phi4-b050-summary-stat.png}
+\caption{Statistiques de la figure \ref{fig-WL1-summary-stat} mais concernant les données $\phi_4$ ($\beta=0.50$).  Notons que l'on dispose de 500 cartes "train" et de 400 cartes "wcrg".}
+\label{fig-phi4-b050-summary-stat}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.99\textwidth]{fig-phi4-b068-summary-stat.png}
+\caption{Statistiques de la figure \ref{fig-WL1-summary-stat} mais concernant les données $\phi_4$ ($\beta=0.68$). Notons que l'on dispose de 500 cartes "train" et de 500 cartes "wcrg".}
+\label{fig-phi4-b068-summary-stat}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.99\textwidth]{fig-phi4-b076-summary-stat.png}
+\caption{Statistiques de la figure \ref{fig-WL1-summary-stat} mais concernant les données $\phi_4$ ($\beta=0.76$). Notons que l'on dispose de 500 cartes "train" et de 50 cartes "wcrg".}
+\label{fig-phi4-b076-summary-stat}
+\end{figure}
+
+Ce que l'on constate c'est que:
+\begin{itemize}
+\itemb les distributions obtenues avec les données $\beta=0.50$ sont remarquablement concordantes; et notons que les coefficients $C_{01}^{iso}$ même sur les données d'entrainement sont quasi-nuls.
+\itemb les désaccords entre les distributions avec les données $\beta=0.76$ sont assez semblables à ceux observés sur les données $WL$.
+\itemb la figure des distributions des coefficients $C_{01}^{iso}$ avec les données $\beta=0.76$ est particulière: les coefficients calculés avec les données générées sont quasi-nuls, or on constate une structuration de la distribution calculée avec les données d'entrainement. Notons que contrairement au cas $WL$ la distribution du bi-spectre semble bien reproduite (aux erreurs statistiques près), et il en va de même avec la distribution $s_{21}$.
+\end{itemize}
+Ainsi, on dispose de plusieurs cas de figures et à part 1 cas ($\phi_4$, $\beta=0.50$) tous les autres exhibent des divergences concernant principalement les coefficients $C_{01}^{iso}$. Même si on n'exclut pas un bug sous-jacent, les distributions de ces coefficients générés montrent tout de même des structures sauf précisément pour $\phi_4$, $\beta=0.50$.
+
+Deux expérimentations ont été menées pour essayer de comprendre la distribution des $C_{01}^{iso}$:
+\begin{itemize}
+\itemb la première concerne les données WL-1 mais avec les cartes à l'échelle $L=64$. Le résultat est présenté sur la figure \ref{fig-WL1-64x64-summary-stat}. Les désaccords des distributions $C_{01}^{iso}$ sont présents. Notons que les autres distributions sont très bien reproduites. 
+\begin{figure}
+\centering
+\includegraphics[width=0.99\textwidth]{fig-WL1-64x64-summary-stat.png}
+\caption{Statistiques de la figure \ref{fig-WL1-summary-stat} mais concernant les données WL-1 à l'échelle $L=64$. Notons que l'on dispose de 500 cartes "train" et de 50 cartes "wcrg".}
+\label{fig-WL1-64x64-summary-stat}
+\end{figure}
+\itemb la seconde reprend la synthèse avec un modèle micro-canonique mais où l'on a volontairement fixé à 0 les coefficients $C_{01}$. Le résultat est illustré sur la figure 
+\begin{figure}
+\centering
+\includegraphics[width=0.99\textwidth]{fig-WL1-micro-C01scaling.png}
+\caption{Statistiques de la figure \ref{fig-WL1-summary-stat} mais concernant les données WL-1 et un modèle micro-canonique du type de celui discuté à la section \ref{sec-WL1-res} mais où les coefficients $C_{01}$ sont volontairement mis à 0. Notons que l'on a utilisé qu'une unique carte pour calculer les distributions.}
+\label{fig-WL1-micro-C01scaling}
+\end{figure}
+Au-delà de la distribution des $C_{01}^{iso}$, l'hypothèse d'une corrélation des désaccords $C_{01}^{iso}$,  bi-spectrum et $s_{21}$ peut sembler avoir un certain sens.
+\end{itemize}
 %
 \section{Conclusion}
 % 
-\section{Annexe}
+Dans cette note, nous avons exposé les résultats de calculs de statistiques permettant d'aller au-delà de l'aspect visuel et spectre de puissance, afin d'apprécier la qualité des cartes générées par des modèles WCRG dans le cas de données de Weak Lensing et $\phi_4$. Ce qui en ressort à l'heure de l'écriture de cette note, c'est que si globalement les distributions d'ordre supérieur sont bien reproduites, ce qui est un résultat nouveau très encourageant, il en reste une qui fait défaut à savoir celle des coefficients de corrélations\footnote{Notons que nous n'avons pas montré les distributions les distributions des coefficients "non-iso" mais nous avons vérifié que  les désaccords sont identiques à ceux observés dans cette note.} $C_{01}$.  Sauf en fait dans un cas particulier, à savoir $\phi_4$ avec $\beta=0.50$, mais il se trouve que la distribution des $C_{01}$ obtenue sur les cartes d'entrainement est nulle.
 
+Donc, il "reste" à comprendre comment on peut améliorer la modélisation des potentiels WCRG afin d'obtenir de meilleurs résultats. Notons qu'un réseau DGAN optimisé sur les données WL-1 donne des cartes dont les statistiques sont en parfait accord avec celles obtenues sur les données d'entrainement. Il en va de même avec des modèles micro-canoniques mais qui par nature sont optimisés de telles distributions.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
