@@ -265,29 +265,34 @@ _{\smash{\belowbaseline[\subdown]{\scriptstyle#1}}}%
 \begin{document}
 
 \maketitle
-
+\renewcommand{\baselinestretch}{0.75}\normalsize
 \tableofcontents
+\renewcommand{\baselinestretch}{1.0}\normalsize
 
 \section{Introduction}
 Dans cette note est exposé une série de statistiques calculées sur des images générées par WCRG \citep{2023arXiv230600181G} en les comparant aux mêmes statistiques calculées non seulement avec les images ayant servies au training du modèle, mais aussi pour un jeu de données avec d'autres modèles comme un DGAN et un modèle micro-locale.
 
 Brièvement, les données utilisées sont les suivantes: 
 \begin{itemize}
-\item[WL-1]: la motivation première était de comparer les images de Weak Lensing\footnote{La référence utilise des résultats de la simulation N-corps GadGet2.} issues d'un modèle Deep GAN de la référence \citep{2019ComAC...6....1M} avec un modèle WCRG entrainé à partir des mêmes données d'entrainement que le réseau génératif. Donc, pour le training les auteurs nous ont fourni 100,000 images 128x128 pixels, ainsi qu'un lot d'images générées par leur réseau CosmoGAN. Ainsi, nous n'avons donc pas ré-entrainé un DGAN à cette occasion. Nous avons extrait 5,000 images\footnote{C'est la statistique utilisée dans la référence \citep{2023arXiv230600181G}} pour l'entrainement d'un modèle WCRG (noté par la suite WCRG-WL1). Nous détaillons un peu plus le traitement dans la section \ref{sec:WL1}.
-\item[WL-2 \& $\phi_4$]:  A la suite, de la comparaison entre le modèle WCRG-WL1 et le DGAN, nous nous sommes interrogés sur ce que les modèles WCRG entrainés sur des données WL mentionnées dans le papier \citep{2023arXiv230600181G}. Nous avons donc repris ces images d'entrainement et synthétisées pour calculer les statistiques. Idem nous avons utilisé les images d'entrainement et synthétisées par WCRG $\phi_4$ ($\beta=\{0.5, 0.68, 0.76\}$ pour calculer les dites statistiques. Cela est détaillé dans la section \ref{sec:WL2_Phi4}
+\item[WL-1]: la motivation première était de comparer les images de Weak Lensing\footnote{La référence utilise des résultats de la simulation N-corps GadGet2.} issues d'un modèle Deep GAN de la référence \citep{2019ComAC...6....1M} avec un modèle WCRG entrainé à partir des mêmes données d'entraînement que le réseau génératif. Donc, pour le training les auteurs nous ont fourni 100,000 images 128x128 pixels, ainsi qu'un lot d'images générées par leur réseau CosmoGAN. Ainsi, nous n'avons donc pas ré-entraîné un DGAN à cette occasion. Nous avons extrait 5,000 images\footnote{C'est la statistique utilisée dans la référence \citep{2023arXiv230600181G}} pour l'entraînement d'un modèle WCRG (noté par la suite WCRG-WL1). Nous détaillons un peu plus le traitement dans la section \ref{sec:WL1}.
+\item[WL-2 \& $\phi_4$]:  A la suite, de la comparaison entre le modèle WCRG-WL1 et le DGAN, nous nous sommes interrogés sur ce que les modèles WCRG entraînés sur des données WL mentionnées dans le papier \citep{2023arXiv230600181G}. Nous avons donc repris ces images d'entraînement et synthétisées pour calculer les statistiques. Idem nous avons utilisé les images d'entraînement et synthétisées par WCRG $\phi_4$ ($\beta=\{0.5, 0.68, 0.76\}$ pour calculer les dites statistiques. Cela est détaillé dans la section \ref{sec:WL2_Phi4}
 \end{itemize}
 
-Les statistiques utilisées sont principalement issues du code python \textit{scattering\_transform} développé par Siho Cheng\footnote{\url{https://github.com/SihaoCheng/scattering_transform} commit Fri Jun 2 11:14:53}
-et utilisé entres autres dans les articles \citep{2021arXiv211201288C, 2023arXiv230617210C}. Cela concerne, le power, le bi et le tri spectra et aussi les coefficients de corrélation $C_{00}$ et $C_{01}$. Concernant les données de WL, la statistique du comptage de pics a également été utilisée. 
-
 Concernant la modélisation WCRG, le code python utilisé est celui du repository \url{https://github.com/Elempereur/WCRG/} mentionné dans la publication afférente.
+
+Les statistiques utilisées sont principalement issues du code python \textit{scattering\_transform} développé par Siho Cheng\footnote{\url{https://github.com/SihaoCheng/scattering_transform} commit Fri Jun 2 11:14:53}
+et utilisé entres autres dans les articles \citep{2021arXiv211201288C, 2023arXiv230617210C}. Cela concerne, le power, le bi et le tri spectra et aussi les coefficients de corrélation $C_{00}$ et $C_{01}$. Concernant les données de WL, la statistique du comptage de pics a également été utilisée. Ces statistiques sont décrites dans la section \ref{sec-summary-stat}.
+
+Les résultats du calcul des statistiques sur les différents lots de données sont présentés dans les sections \ref{sec-WL1-res} et  \ref{sec:WL2_Phi4}.
+
 %
 \section{Modélisation WCRG sur les données WL-1}
+\label{sec:WL1}
 %
 \subsection{Phase d'apprentissage}
 \label{sec-wcrg-WL1-learning}
 %
-Avant l'entrainement du modèle WCRG, un traitement des données que l'on peut qualifier de "gaussianisation" a été effectué. En effet, sur la figure \ref{fig-WL1-non-trans}, on peut remarquer que la distribution des valeurs des pixels est mono-mode et peut être transformée en distribution normale par la méthode Cox-Box suivie d'une standardisation classique\footnote{Si $x$ est la valeur d'un pixel original alors primo par l'optimisation Cox-Box on trouve $\lambda^\ast \approx -0.22$, et $x^\prime = (x^{\lambda^\ast}-1)/\lambda^\ast$ suit une loi gaussienne, puis la standardisation classique permet d'obtenir une distribution normale $x^\prime \sim \mathcal{N}(0,1)$.}. Le résultat de la transformation globale est illustré sur la figure \ref{fig-WL1-trans}. Cette transformation globale (inversible) est appliquée sur tous les lots de d'images (entrainement et génération) du DGAN.
+Avant l'entraînement du modèle WCRG, un traitement des données que l'on peut qualifier de "gaussianisation" a été effectué. En effet, sur la figure \ref{fig-WL1-non-trans}, on peut remarquer que la distribution des valeurs des pixels est mono-mode et peut être transformée en distribution normale par la méthode Cox-Box suivie d'une standardisation classique\footnote{Si $x$ est la valeur d'un pixel original alors primo par l'optimisation Cox-Box on trouve $\lambda^\ast \approx -0.22$, et $x^\prime = (x^{\lambda^\ast}-1)/\lambda^\ast$ suit une loi gaussienne, puis la standardisation classique permet d'obtenir une distribution normale $x^\prime \sim \mathcal{N}(0,1)$.}. Le résultat de la transformation globale est illustré sur la figure \ref{fig-WL1-trans}. Cette transformation globale (inversible) est appliquée sur tous les lots de d'images (entraînement et génération) du DGAN.
 %
 \begin{figure}[h]
 \centering
@@ -377,7 +382,7 @@ def shift_modif(n):
 %
 \itemb A l'échelle $L=64$, on utilise 30 sigmoïdes réparties uniformément selon les quantiles avec $q_{min}=10^{-5}$, $q_{max}=1.0$ et \textsf{extend = 1.0}. De plus si \textsf{mode = 'All'} comme précédemment, par contre \textsf{shifts = shift\_modif(L//8)}.
 %
-\itemb Enfin à l'échelle $L=128$ (taille des images d'entrainement), on utilise comme  30 sigmoïdes uniformément réparties sur l'intervalle $[-7.0, 5.5]$ (\textsf{extend = 0.25}), et si \textsf{mode = 'All'} comme précédemment, par contre \textsf{shifts = shift\_modif(L//16)}.
+\itemb Enfin à l'échelle $L=128$ (taille des images d'entraînement), on utilise comme  30 sigmoïdes uniformément réparties sur l'intervalle $[-7.0, 5.5]$ (\textsf{extend = 0.25}), et si \textsf{mode = 'All'} comme précédemment, par contre \textsf{shifts = shift\_modif(L//16)}.
 %
 \itemb Les paramètres qui sont particulièrement délicats affectant la synthèse des images aux différentes échelles, sont ceux qui définissent les centres des sigmoïdes (l'intervalle $[min,max]$ pour \textsf{linspace\_centers}, ou $[q_{min},q_{max}]$ pour \textsf{quantile\_centers}. La méthode \textsf{shift\_modif} a été utilisée in fine mais ne change pas vraiment les résultats par rapport à l'usage de \textsf{shift\_quad\_Sym} utilisée de prime abord. Les optimisations SGD sont souvent reprises pour un peu tuner les paramètres tels que le nombre d'époques \textsf{num\_epochs} et le learning rate \text{lr}. Parfois deux étapes d'optimisation ont été pratiquées, notamment avec une valeur de  \text{lr} plus petite pour la seconde étape.
 \end{itemize}
@@ -397,89 +402,15 @@ Une fois les paramètres "optimisés" (par ex. les sigmoïdes), les différents 
 %
 Une fois le modèle appris, on peut regarder à chaque échelle la qualité des synthèses. En fait, à dire vrai, les paramètres qui définissent les sigmoïdes à toutes les échelles ont été ajustés à la main largement pour que les histogrammes de contrôles montre une bonne adéquation entre images d'origines et images de synthèse. La technique de sampling est en tout point identique à celle mise en œuvre pour l'article. Ce qui peut changer concerne le nombre de steps et la taille de chaque step. \textit{Même si la suite pourrait paraître fastidieuse et répétitive, dans cette note une certaine exhaustivité s'impose néanmoins surtout que les codes n'ont pu être tournés sur notebooks partageables.} 
 
-A l'échelle $L=1$, la comparaison des distributions de valeurs de pixels entre données d'entrainement et synthétisées est montrée sur la figure \ref{fig-WL1-synt-L1-pixelval}.
-\begin{figure}
-\centering
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L1-pixelval.png}
-\caption{Comparaison des valeurs de pixels à l'échelle $L=1$.}
-\label{fig-WL1-synt-L1-pixelval}
-\end{figure}
+A l'échelle $L=1$, la comparaison des distributions de valeurs de pixels entre données d'entraînement et synthétisées est montrée sur la figure \ref{fig-WL1-synt-L1-pixelval} de l'appendix. Aux échelles suivantes, outre la comparaison des distributions des valeurs de pixels des images originales et synthétisées, on peut également questionner la distribution des cartes de détails hautes fréquences (horizontales/verticales/diagonales) obtenues par décomposition en ondelettes.
+Les résultats aux échelles $L\in[1,128]$ sont présentés sur les figures de \ref{fig-WL1-synt-L2} à \ref{fig-WL1-synt-L128} de l'appendix. Pour des raisons tenant à la taille mémoire des GPUs utilisés, le nombre de cartes générées jusqu'à l'échelle 16 incluse est de 5000, tandis que pour les échelles supérieures on ne peut disposer que de 500 cartes.
 
-Aux échelles suivantes, outre la comparaison des distributions des valeurs de pixels des images originales et synthétisées, on peut également questionner la distribution des cartes de détails hautes fréquences (horizontales/verticales/diagonales) obtenues par décomposition en ondelettes.
-
-Les résultats aux échelles $L\in[1,128]$ sont présentés sur les figures de \ref{fig-WL1-synt-L2} à \ref{fig-WL1-synt-L128}. Pour des raisons tenant à la taille mémoire des GPUs utilisés, le nombre de cartes générées jusqu'à l'échelle 16 incluse est de 5000, tandis que pour les échelles supérieures on ne peut disposer que de 500 cartes.
-\begin{figure}
-\centering
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L2-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L2-details_1.png}\\
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L2-details_2.png}
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L2-details_3.png}
-\caption{Comparaison à l'échelle $L=2$ entre cartes de type "originale/entrainement" et de type "synthètisée": distribution des valeurs de pixels de cartes "totales" (haut-gauche), de détails "H" (haut-droite), de détails "V" (bas-gauche) et de détails "D" (bas-droite). }
-\label{fig-WL1-synt-L2}
-\end{figure}
-
-
-\begin{figure}
-\centering
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L4-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L4-details_1.png}\\
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L4-details_2.png}
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L4-details_3.png}
-\caption{Echelle $L=4$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
-\label{fig-WL1-synt-L4}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L8-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L8-details_1.png}\\
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L8-details_2.png}
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L8-details_3.png}
-\caption{Echelle $L=8$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
-\label{fig-WL1-synt-L8}
-\end{figure}
-
-
-\begin{figure}
-\centering
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L16-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L16-details_1.png}\\
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L16-details_2.png}
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L16-details_3.png}
-\caption{Echelle $L=16$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
-\label{fig-WL1-synt-L16}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L32-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L32-details_1.png}\\
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L32-details_2.png}
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L32-details_3.png}
-\caption{Echelle $L=32$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
-\label{fig-WL1-synt-L32}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L64-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L64-details_1.png}\\
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L64-details_2.png}
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L64-details_3.png}
-\caption{Echelle $L=64$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
-\label{fig-WL1-synt-L64}
-\end{figure}
-
-
-\begin{figure}
-\centering
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L128-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L128-details_1.png}\\
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L128-details_2.png}
-\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L128-details_3.png}
-\caption{Echelle $L=128$ (la plus grande possible): légende identique à la figure \ref{fig-WL1-synt-L2}.}
-\label{fig-WL1-synt-L128}
-\end{figure}
-
-A l'échelle $L=128$, on dispose de cartes synthétisées "finales" qui si tout se passe au mieux doivent ressembler comme deux gouttes d'eau aux cartes utilisées pour l'entrainement (ou cartes "originales"). La figure \ref{fig-WL1-synt-exemples} donne quelques exemples de cartes originales et synthétisées.
+A l'échelle $L=128$, on dispose de cartes synthétisées "finales" qui si tout se passe au mieux doivent ressembler comme deux gouttes d'eau aux cartes utilisées pour l'entraînement (ou cartes "originales"). La figure \ref{fig-WL1-synt-exemples} donne quelques exemples de cartes originales et synthétisées.
 %
 \begin{figure}
 \centering
 \includegraphics[width=0.99\textwidth]{fig-WL1-synt-exemples.png}
-\caption{Exemples de cartes WL-1 utilisées pour l'entrainement et synthétisées une fois le modèles WCRG optimisé.}
+\caption{Exemples de cartes WL-1 utilisées pour l'entraînement et synthétisées une fois le modèles WCRG optimisé.}
 \label{fig-WL1-synt-exemples}
 \end{figure}
 % 
@@ -559,7 +490,7 @@ Si on se penche sur les distributions qui dénotent, on constate que:
 \end{itemize} 
 C'est deux points dont l'origine peut être la même, a motiver les investigations suivantes.
 
-Notons que si l'on prend les cartes  issues de la génération du réseau CosmoGAN mentionné en introduction, il y a un parfait accord de toutes les distributions "dgan" (orange) avec les distribution d'entrainement ("train"). En ce sens, le GAN fait mieux sur ce critère\footnote{Rappel: à l'origine de l'étude était la comparaison "dgan", "wcrg", et dans ce contexte le nombre d'images ayant servit à l'entrainement du modère WCRG est de 5,000 images alors que le DGAN en a utilisé 200,000 \citep{2019ComAC...6....1M}}.  
+Notons que si l'on prend les cartes  issues de la génération du réseau CosmoGAN mentionné en introduction, il y a un parfait accord de toutes les distributions "dgan" (orange) avec les distribution d'entraînement ("train"). En ce sens, le GAN fait mieux sur ce critère\footnote{Rappel: à l'origine de l'étude était la comparaison "dgan", "wcrg", et dans ce contexte le nombre d'images ayant servit à l'entraînement du modère WCRG est de 5,000 images alors que le DGAN en a utilisé 200,000 \citep{2019ComAC...6....1M}}.  
 
 Nous avons également procédé à la synthèses de cartes en utilisant une modélisation micro-canonique \citep{2023arXiv230617210C} à l'aide du code de Siho Cheng selon typiquement 
 \begin{lstlisting}[language=iPython]
@@ -568,13 +499,14 @@ Nous avons également procédé à la synthèses de cartes en utilisant une mod�
 qui utilise les paramètres: le rapport $\langle I\rangle/\sigma(I)$, $L2(I\ast \psi_i)$, $S_1$, ainsi que les parties réelles et imaginaires des coefficients de corrélation $C_{01}$ et $C_{01}$
 Ce type de modélisation/synthèse notée "micro"(vert) sur la Fig.~\ref{fig-WL1-summary-stat} reproduit très bien la quasi totalité des distributions exceptée\footnote{Si l'on ne porte que les distributions "train" et "micro", la remontée du spectre de puissance "micro" est bien visible.} le spectre de puissance à grande valeur de $k$ même si on note que les fluctuations des valeurs sont bien plus réduites que pour les autres modèles pourtant calculées avec le même nombre de cartes. Ceci, concernant les coefficients $C_{01}$ l'accord est parfait, mais on s'en doutait puisqu'ils rentrent dans la liste des paramètres ayant servi pour définir la métrique à minimiser afin de produire le modèle micro-canonique.
 
-Dans les sections suivantes, nous allons utiliser les cartes générées par les modèles WCRG ainsi que celles d'entrainement de type WL-2 et $\phi_4$ décrites dans l'introduction, afin de savoir si ces modèles performent mieux ou pas.
+Dans les sections suivantes, nous allons utiliser les cartes générées par les modèles WCRG ainsi que celles d'entraînement de type WL-2 et $\phi_4$ décrites dans l'introduction, afin de savoir si ces modèles performent mieux ou pas.
 %
 \section{Modèles WCRG et données WL-2 et $\phi_4$}
+\label{sec:WL2_Phi4}
 %
-La question qui vient est de savoir pour quelles raisons la distribution $C_{01}^{iso}$ (et aussi bi-spectre et $s_{21}$) est nettement moins bien reproduite par le modèle WCRG optimisé comme décrit à la section \ref{sec-wcrg-WL1-learning}. Pour se faire, nous avons utilisé directement (c'est-à-dire sans nouveau entrainement) les modèles et les données de l'article \citep{2023arXiv230600181G}.
+La question qui vient est de savoir pour quelles raisons la distribution $C_{01}^{iso}$ (et aussi bi-spectre et $s_{21}$) est nettement moins bien reproduite par le modèle WCRG optimisé comme décrit à la section \ref{sec-wcrg-WL1-learning}. Pour se faire, nous avons utilisé directement (c'est-à-dire sans nouveau entraînement) les modèles et les données de l'article \citep{2023arXiv230600181G}.
 
-Concernant les données WL-2, on dispose pour le calcul des statistiques de 500 cartes d'entrainement ("train") et de 209 cartes générées ("wcrg"). Une note technique: nous avons procéder à un recalage de la distribution des valeurs de pixels des cartes générées afin que la moyenne soit égale à celle des cartes d'entrainement, mais nous n'avons pas opéré de gaussianisation (cf. Sec.~\ref{sec-wcrg-WL1-learning}). Les résultats sont présentés sur la figure \ref{fig-WL2-summary-stat}.
+Concernant les données WL-2, on dispose pour le calcul des statistiques de 500 cartes d'entraînement ("train") et de 209 cartes générées ("wcrg"). Une note technique: nous avons procéder à un recalage de la distribution des valeurs de pixels des cartes générées afin que la moyenne soit égale à celle des cartes d'entraînement, mais nous n'avons pas opéré de gaussianisation (cf. Sec.~\ref{sec-wcrg-WL1-learning}). Les résultats sont présentés sur la figure \ref{fig-WL2-summary-stat}.
 \begin{figure}
 \centering
 \includegraphics[width=0.99\textwidth]{fig-WL2-summary-stat.png}\\
@@ -584,13 +516,13 @@ Concernant les données WL-2, on dispose pour le calcul des statistiques de 500 
 \end{figure}
 Par rapport à la figure \ref{fig-WL1-summary-stat} utilisant un modèle optimisé sur les données WL-1 (gaussianisée), on constate 
 \begin{itemize}
-\itemb primo que la distribution des $C_{01}^{iso}$  calculées avec les cartes générées ("wcrg") suit les ondulations de la distribution calculée sur les données d'entrainement ("train"). Mais il y a un petit désaccord néanmoins mais bien plus petit qu'en même.
+\itemb primo que la distribution des $C_{01}^{iso}$  calculées avec les cartes générées ("wcrg") suit les ondulations de la distribution calculée sur les données d'entraînement ("train"). Mais il y a un petit désaccord néanmoins mais bien plus petit qu'en même.
 \itemb les petits désaccords sur les distribution bi-spectre et $s_{21}$ sont de même ampleur
 \itemb on note également petit désaccord  sur la distribution des $C_{11}^{iso}$.
 \end{itemize}
 Ce premier point nous renseigne sur le fait qu'un modèle WCRG est capable de générer des cartes avec des coefficients $C_{01}^{iso}$ convenables en tous les cas bien plus que ceux de la figure \ref{fig-WL1-summary-stat}. 
 
-Concernant les données $\phi_4$, on dispose de 3 lots obtenus avec les valeurs de $\beta$ différentes ($\{0.5,\ 0.68,\ 0.76\}$) qui influencent la dynamique sous-jacente. Tout comme pour les cartes WL-2, on a procédé à l'accord des moyennes des distributions des valeurs de pixles entre les cartes générées et les  cartes d'entrainement. Les différents résultats sont exposés sur les figures \ref{fig-phi4-b050-summary-stat}, \ref{fig-phi4-b068-summary-stat}, et \ref{fig-phi4-b076-summary-stat}.
+Concernant les données $\phi_4$, on dispose de 3 lots obtenus avec les valeurs de $\beta$ différentes ($\{0.5,\ 0.68,\ 0.76\}$) qui influencent la dynamique sous-jacente. Tout comme pour les cartes WL-2, on a procédé à l'accord des moyennes des distributions des valeurs de pixles entre les cartes générées et les  cartes d'entraînement. Les différents résultats sont exposés sur les figures \ref{fig-phi4-b050-summary-stat}, \ref{fig-phi4-b068-summary-stat}, et \ref{fig-phi4-b076-summary-stat}.
 
 \begin{figure}
 \centering
@@ -615,9 +547,9 @@ Concernant les données $\phi_4$, on dispose de 3 lots obtenus avec les valeurs 
 
 Ce que l'on constate c'est que:
 \begin{itemize}
-\itemb les distributions obtenues avec les données $\beta=0.50$ sont remarquablement concordantes; et notons que les coefficients $C_{01}^{iso}$ même sur les données d'entrainement sont quasi-nuls.
+\itemb les distributions obtenues avec les données $\beta=0.50$ sont remarquablement concordantes; et notons que les coefficients $C_{01}^{iso}$ même sur les données d'entraînement sont quasi-nuls.
 \itemb les désaccords entre les distributions avec les données $\beta=0.76$ sont assez semblables à ceux observés sur les données $WL$.
-\itemb la figure des distributions des coefficients $C_{01}^{iso}$ avec les données $\beta=0.76$ est particulière: les coefficients calculés avec les données générées sont quasi-nuls, or on constate une structuration de la distribution calculée avec les données d'entrainement. Notons que contrairement au cas $WL$ la distribution du bi-spectre semble bien reproduite (aux erreurs statistiques près), et il en va de même avec la distribution $s_{21}$.
+\itemb la figure des distributions des coefficients $C_{01}^{iso}$ avec les données $\beta=0.76$ est particulière: les coefficients calculés avec les données générées sont quasi-nuls, or on constate une structuration de la distribution calculée avec les données d'entraînement. Notons que contrairement au cas $WL$ la distribution du bi-spectre semble bien reproduite (aux erreurs statistiques près), et il en va de même avec la distribution $s_{21}$.
 \end{itemize}
 Ainsi, on dispose de plusieurs cas de figures et à part 1 cas ($\phi_4$, $\beta=0.50$) tous les autres exhibent des divergences concernant principalement les coefficients $C_{01}^{iso}$. Même si on n'exclut pas un bug sous-jacent, les distributions de ces coefficients générés montrent tout de même des structures sauf précisément pour $\phi_4$, $\beta=0.50$.
 
@@ -642,14 +574,92 @@ Au-delà de la distribution des $C_{01}^{iso}$, l'hypothèse d'une corrélation 
 %
 \section{Conclusion}
 % 
-Dans cette note, nous avons exposé les résultats de calculs de statistiques permettant d'aller au-delà de l'aspect visuel et spectre de puissance, afin d'apprécier la qualité des cartes générées par des modèles WCRG dans le cas de données de Weak Lensing et $\phi_4$. Ce qui en ressort à l'heure de l'écriture de cette note, c'est que si globalement les distributions d'ordre supérieur sont bien reproduites, ce qui est un résultat nouveau très encourageant, il en reste une qui fait défaut à savoir celle des coefficients de corrélations\footnote{Notons que nous n'avons pas montré les distributions les distributions des coefficients "non-iso" mais nous avons vérifié que  les désaccords sont identiques à ceux observés dans cette note.} $C_{01}$.  Sauf en fait dans un cas particulier, à savoir $\phi_4$ avec $\beta=0.50$, mais il se trouve que la distribution des $C_{01}$ obtenue sur les cartes d'entrainement est nulle.
+Dans cette note, nous avons exposé les résultats de calculs de statistiques permettant d'aller au-delà de l'aspect visuel et spectre de puissance, afin d'apprécier la qualité des cartes générées par des modèles WCRG dans le cas de données de Weak Lensing et $\phi_4$. Ce qui en ressort à l'heure de l'écriture de cette note, c'est que si globalement les distributions d'ordre supérieur sont bien reproduites, ce qui est un résultat nouveau très encourageant, il en reste une qui fait défaut à savoir celle des coefficients de corrélations\footnote{Notons que nous n'avons pas montré les distributions les distributions des coefficients "non-iso" mais nous avons vérifié que  les désaccords sont identiques à ceux observés dans cette note.} $C_{01}$.  Sauf en fait dans un cas particulier, à savoir $\phi_4$ avec $\beta=0.50$, mais il se trouve que la distribution des $C_{01}$ obtenue sur les cartes d'entraînement est nulle.
 
-Donc, il "reste" à comprendre comment on peut améliorer la modélisation des potentiels WCRG afin d'obtenir de meilleurs résultats. Notons qu'un réseau DGAN optimisé sur les données WL-1 donne des cartes dont les statistiques sont en parfait accord avec celles obtenues sur les données d'entrainement. Il en va de même avec des modèles micro-canoniques mais qui par nature sont optimisés de telles distributions.
+Donc, il "reste" à comprendre comment on peut améliorer la modélisation des potentiels WCRG afin d'obtenir de meilleurs résultats. Notons qu'un réseau DGAN optimisé sur les données WL-1 donne des cartes dont les statistiques sont en parfait accord avec celles obtenues sur les données d'entraînement. Il en va de même avec des modèles micro-canoniques mais qui par nature sont optimisés de telles distributions.
 
-\newpage
+%%%%%%%%%%
+%\newpage
+\appendix
+\section{Plots de contrôle...}
+Les histogrammes de cette section sont issues de la phase de synthèse du modèle WCRG entraîner sur les données WL-1 (Sec.~\ref{sec-wcrg-WL1-synt}).
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L1-pixelval.png}
+\caption{Comparaison des valeurs de pixels à l'échelle $L=1$.}
+\label{fig-WL1-synt-L1-pixelval}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L2-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L2-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L2-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L2-details_3.png}
+\caption{Comparaison à l'échelle $L=2$ entre cartes de type "originale/entraînement" et de type "synthétisée": distribution des valeurs de pixels de cartes "totales" (haut-gauche), de détails "H" (haut-droite), de détails "V" (bas-gauche) et de détails "D" (bas-droite). }
+\label{fig-WL1-synt-L2}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L4-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L4-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L4-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L4-details_3.png}
+\caption{Echelle $L=4$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
+\label{fig-WL1-synt-L4}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L8-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L8-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L8-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L8-details_3.png}
+\caption{Echelle $L=8$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
+\label{fig-WL1-synt-L8}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L16-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L16-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L16-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L16-details_3.png}
+\caption{Echelle $L=16$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
+\label{fig-WL1-synt-L16}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L32-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L32-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L32-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L32-details_3.png}
+\caption{Echelle $L=32$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
+\label{fig-WL1-synt-L32}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L64-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L64-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L64-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L64-details_3.png}
+\caption{Echelle $L=64$: légende identique à la figure \ref{fig-WL1-synt-L2}.}
+\label{fig-WL1-synt-L64}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L128-pixelval.png}\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L128-details_1.png}\\
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L128-details_2.png}
+\includegraphics[width=0.35\textwidth]{fig-WL1-synt-L128-details_3.png}
+\caption{Echelle $L=128$ (la plus grande possible): légende identique à la figure \ref{fig-WL1-synt-L2}.}
+\label{fig-WL1-synt-L128}
+\end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\addcontentsline{toc}{section}{Références}
 % Put your bibiliography file here
-%\section*{Bibliography}
+%\section{Bibliography}
 \bibliographystyle{aa}
 \bibliography{refs.bib}
 
